@@ -37,22 +37,18 @@ class PhonePreviewPanel {
     }
 
     public static createOrShow(extensionUri: vscode.Uri) {
-        const column = vscode.window.activeTextEditor
-            ? vscode.window.activeTextEditor.viewColumn
-            : undefined;
-
         if (PhonePreviewPanel.currentPanel) {
-            PhonePreviewPanel.currentPanel._panel.reveal(column);
+            PhonePreviewPanel.currentPanel._panel.reveal(vscode.ViewColumn.Two);
             return;
         }
 
         const panel = vscode.window.createWebviewPanel(
             'phonePreview',
             'Phone Preview',
-            column || vscode.ViewColumn.Two,
+            vscode.ViewColumn.Two,
             {
                 enableScripts: true,
-                retainContextWhenHidden: true,
+                retainContextWhenHidden: true, 
             }
         );
 
