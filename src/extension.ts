@@ -1,0 +1,261 @@
+import * as vscode from 'vscode';
+
+export function activate(context: vscode.ExtensionContext) {
+    let disposable = vscode.commands.registerCommand('phone-preview.show', () => {
+        PhonePreviewPanel.createOrShow(context.extensionUri);
+    });
+
+    context.subscriptions.push(disposable);
+}
+
+export function deactivate() {}
+
+class PhonePreviewPanel {
+    public static currentPanel: PhonePreviewPanel | undefined;
+    private readonly _panel: vscode.WebviewPanel;
+    private readonly _extensionUri: vscode.Uri;
+    private _disposables: vscode.Disposable[] = [];
+
+    private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri) {
+        this._panel = panel;
+        this._extensionUri = extensionUri;
+
+        this._update();
+
+        this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
+        
+        // Update content when the active editor changes
+        vscode.window.onDidChangeActiveTextEditor(() => {
+            this._update();
+        }, null, this._disposables);
+    }
+
+    public static createOrShow(extensionUri: vscode.Uri) {
+        const column = vscode.window.activeTextEditor
+            ? vscode.window.activeTextEditor.viewColumn
+            : undefined;
+
+        if (PhonePreviewPanel.currentPanel) {
+            PhonePreviewPanel.currentPanel._panel.reveal(column);
+            return;
+        }
+
+        const panel = vscode.window.createWebviewPanel(
+            'phonePreview',
+            'Phone Preview',
+            column || vscode.ViewColumn.Two,
+            {
+                enableScripts: true,
+                retainContextWhenHidden: true,
+            }
+        );
+
+        PhonePreviewPanel.currentPanel = new PhonePreviewPanel(panel, extensionUri);
+    }
+
+    private _update() {
+        const webview = this._panel.webview;
+        this._panel.webview.html = this._getHtmlForWebview(webview);
+    }
+
+    private _getHtmlForWebview(webview: vscode.Webview) {
+        const editor = vscode.window.activeTextEditor;
+        const currentFile = 'http://localhost:3000';
+
+        return `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <style>
+                    * {
+                        -webkit-font-smoothing: antialiased;
+                        -moz-osx-font-smoothing: grayscale;
+                        }
+                    body {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                        align-items: center;
+                        height: 100vh;
+                        margin: 0;
+                        background-color: #f0f0f0;
+                        gap: 20px;
+                    }
+
+                    .wrapper {
+                        position: relative;
+                        width: 100%;
+                        height: 100%;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+
+                    .phone-container {
+                        position: relative;
+                        background: #1b1b1b;
+                        border-radius: 55px;
+                        box-shadow: 0 0 20px rgba(0,0,0,0.2);
+                        padding: 15px;
+                        box-sizing: border-box;
+                        transform-origin: center;
+                        transform: scale(var(--scale-factor, 1));
+                    }
+
+                    .phone-screen {
+                        position: relative;
+                        background: white;
+                        width: 390px;
+                        height: 844px;
+                        border-radius: 45px;
+                        overflow: hidden;
+                    }
+
+                    .notch {
+                        position: absolute;
+                        width: 160px;
+                        height: 35px;
+                        background: #1b1b1b;
+                        left: 50%;
+                        top: -1px;
+                        transform: translateX(-50%);
+                        border-bottom-left-radius: 24px;
+                        border-bottom-right-radius: 24px;
+                        z-index: 1000;
+                    }
+
+                    .phone-content {
+                        width: 100%;
+                        height: 100%;
+                        border: none;
+                    }
+
+                    .url-input-container {
+                        position: absolute;
+                        bottom: 10px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        width: 90%;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        z-index: 1000;
+                    }
+
+                    .url-input {
+                        flex: 1;
+                        height: 30px;
+                        border: 2px solid #1b1b1b;
+                        border-radius: 8px;
+                        padding: 0 10px;
+                        font-size: 14px;
+                        outline: none;
+                        transition: border-color 0.2s;
+                    }
+
+                    .url-input:focus {
+                        border-color: #007AFF;
+                    }
+
+                    .reload-button {
+                        width: 30px;
+                        height: 30px;
+                        background-color: #1b1b1b;
+                        color: white;
+                        border: none;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        font-size: 16px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                </style>
+                <script>
+                    function calculateScale() {
+                        const phone = document.querySelector('.phone-container');
+                        const wrapper = document.querySelector('.wrapper');
+                        
+                        const phoneAspectRatio = 844 / 390;
+                        const wrapperAspectRatio = wrapper.clientHeight / wrapper.clientWidth;
+                        
+                        let scale;
+                        if (wrapperAspectRatio > phoneAspectRatio) {
+                            scale = (wrapper.clientWidth / 390) * 0.8;
+                        } else {
+                            scale = (wrapper.clientHeight / 844) * 0.8;
+                        }
+                        
+                        phone.style.setProperty('--scale-factor', Math.min(1, scale));
+                    }
+
+                    function navigateToUrl(event) {
+                        if (event.key === 'Enter') {
+                            event.preventDefault();
+                            const url = event.target.value;
+                            const iframe = document.querySelector('.phone-content');
+                            
+                            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                                iframe.src = 'http://' + url;
+                                event.target.value = 'http://' + url;
+                            } else {
+                                iframe.src = url;
+                            }
+                        }
+                    }
+
+                    function reloadPage() {
+                        const iframe = document.querySelector('.phone-content');
+                        iframe.src = iframe.src;
+                    }
+
+                    window.onload = () => {
+                        const iframe = document.querySelector('.phone-content');
+                        const urlInput = document.querySelector('.url-input');
+                        
+                        iframe.onload = () => {
+                            urlInput.value = iframe.src;
+                        };
+                        
+                        urlInput.value = '${currentFile}';
+                        calculateScale();
+                    }
+
+                    window.onresize = calculateScale;
+                </script>
+            </head>
+            <body>
+                <div class="wrapper">
+                    <div class="url-input-container">
+                        <input type="text" class="url-input" 
+                            placeholder="Enter URL and press Enter"
+                            onkeypress="navigateToUrl(event)"
+                        />
+                        <button class="reload-button" onclick="reloadPage()">⟳</button>
+                    </div>
+                    <div class="phone-container">
+                        <div class="phone-screen">
+                            <div class="notch"></div>
+                            <iframe class="phone-content" src="${currentFile}" />
+                            
+                        </div>
+                    </div>
+                </div>
+            </body>
+            </html>
+        `;
+    }
+
+    private dispose() {
+        PhonePreviewPanel.currentPanel = undefined;
+        this._panel.dispose();
+        while (this._disposables.length) {
+            const disposable = this._disposables.pop();
+            if (disposable) {
+                disposable.dispose();
+            }
+        }
+    }
+} 

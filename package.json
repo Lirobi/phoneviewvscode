@@ -1,0 +1,55 @@
+{
+    "name": "phone-preview",
+    "displayName": "Phone Preview",
+    "description": "Preview your web app in a phone-sized viewport",
+    "version": "0.0.2",
+    "engines": {
+        "vscode": "^1.60.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:phone-preview.show"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "phone-preview.show",
+                "title": "Show Phone Preview"
+            }
+        ],
+        "configuration": {
+            "type": "object",
+            "properties": {
+                "logo": {
+                    "type": "string",
+                    "default": "logo.png",
+                    "description": "Path to the logo of the extension"
+                }
+            }
+        }
+    },
+    "files": [
+        "out/**/*",
+        "out/assets/**/*"
+    ],
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "lint": "eslint src --ext .ts"
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.60.0",
+        "@types/node": "^14.14.37",
+        "@typescript-eslint/eslint-plugin": "^4.19.0",
+        "@typescript-eslint/parser": "^4.19.0",
+        "eslint": "^7.22.0",
+        "typescript": "^4.2.3"
+    },
+    "publisher": "lirobi",
+    "icon": "out/assets/icon.png",
+    "license": "MIT" 
+} 
