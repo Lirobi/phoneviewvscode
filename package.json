@@ -2,7 +2,7 @@
     "name": "phone-preview",
     "displayName": "Mobile Preview",
     "description": "Preview your web app in a phone-sized viewport/mobile device",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "engines": {
         "vscode": "^1.60.0"
     },
