@@ -80,7 +80,7 @@ class PhonePreviewPanel {
                         align-items: center;
                         height: 100vh;
                         margin: 0;
-                        background-color: #f0f0f0;
+                        background: transparent;
                         gap: 20px;
                     }
 
@@ -95,7 +95,7 @@ class PhonePreviewPanel {
 
                     .phone-container {
                         position: relative;
-                        background: #1b1b1b;
+                        background: black;
                         border-radius: 55px;
                         box-shadow: 0 0 20px rgba(0,0,0,0.2);
                         padding: 15px;
@@ -117,7 +117,7 @@ class PhonePreviewPanel {
                         position: absolute;
                         width: 160px;
                         height: 35px;
-                        background: #1b1b1b;
+                        background: black;
                         left: 50%;
                         top: -1px;
                         transform: translateX(-50%);
@@ -147,22 +147,24 @@ class PhonePreviewPanel {
                     .url-input {
                         flex: 1;
                         height: 30px;
-                        border: 2px solid #1b1b1b;
+                        border: 2px solid black;
                         border-radius: 8px;
                         padding: 0 10px;
                         font-size: 14px;
                         outline: none;
                         transition: border-color 0.2s;
+                        background: transparent;
+                        color: white;
                     }
 
                     .url-input:focus {
-                        border-color: #007AFF;
+                        border-color: white;
                     }
 
                     .reload-button {
                         width: 30px;
                         height: 30px;
-                        background-color: #1b1b1b;
+                        background-color: black;
                         color: white;
                         border: none;
                         border-radius: 8px;
