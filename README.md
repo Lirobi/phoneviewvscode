@@ -12,3 +12,5 @@ To use the Phone Preview extension:
 1. Open the Command Palette (Ctrl+Shift+P).
 2. Type `Show Phone Preview` and select it to activate the preview.
 
+## Settings
+You can customize the extension by modifying the settings in your `settings.json` file or by using the `Mobile Preview: Open Settings` command.

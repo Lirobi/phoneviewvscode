@@ -3,10 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deactivate = exports.activate = void 0;
 const vscode = require("vscode");
 function activate(context) {
-    let disposable = vscode.commands.registerCommand('phone-preview.show', () => {
+    let disposable = vscode.commands.registerCommand('mobile-preview.show', () => {
         PhonePreviewPanel.createOrShow(context.extensionUri);
     });
-    context.subscriptions.push(disposable);
+    let openSettings = vscode.commands.registerCommand('mobile-preview.openSettings', () => {
+        vscode.commands.executeCommand('workbench.action.openSettings', 'Mobile Preview');
+    });
+    context.subscriptions.push(disposable, openSettings);
 }
 exports.activate = activate;
 function deactivate() { }
@@ -43,7 +46,7 @@ class PhonePreviewPanel {
     }
     _getHtmlForWebview(webview) {
         const editor = vscode.window.activeTextEditor;
-        const currentFile = 'http://localhost:3000';
+        const currentFile = vscode.workspace.getConfiguration('mobile-preview').get('url') || 'http://localhost:3000';
         return `
             <!DOCTYPE html>
             <html lang="en">
