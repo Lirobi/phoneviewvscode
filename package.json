@@ -64,7 +64,7 @@
         "typescript": "^4.2.3"
     },
     "publisher": "lirobi",
-    "icon": "out/assets/icon.png",
+    "icon": "out/assets/extension-logo.png",
     "license": "MIT",
     "repository": {
         "type": "git",
