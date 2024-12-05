@@ -2,7 +2,7 @@
     "name": "phone-preview",
     "displayName": "Phone Preview",
     "description": "Preview your web app in a phone-sized viewport",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "engines": {
         "vscode": "^1.60.0"
     },
@@ -19,17 +19,7 @@
                 "command": "phone-preview.show",
                 "title": "Show Phone Preview"
             }
-        ],
-        "configuration": {
-            "type": "object",
-            "properties": {
-                "logo": {
-                    "type": "string",
-                    "default": "logo.png",
-                    "description": "Path to the logo of the extension"
-                }
-            }
-        }
+        ]
     },
     "files": [
         "out/**/*",
