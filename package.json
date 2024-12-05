@@ -2,7 +2,7 @@
     "name": "phone-preview",
     "displayName": "Mobile Preview",
     "description": "Preview your web app in a phone-sized viewport/mobile device",
-    "version": "1.1.1",
+    "version": "1.2.0",
     "engines": {
         "vscode": "^1.60.0"
     },
@@ -29,8 +29,18 @@
             "properties": {
                 "mobile-preview.url": {
                     "type": "string",
-                    "default": "http://localhost:3000",
+                    "default": null,
                     "description": "The URL of the web app to preview"
+                },
+                "mobile-preview.device": {
+                    "type": "string",
+                    "default": "iPhone 13 Pro",
+                    "description": "The device to preview the web app on",
+                    "enum": [
+                        "iPhone 13 Pro",
+                        "iPhone 15",
+                        "iPhone 15 Pro Max"
+                    ]
                 }
             }
         }
