@@ -1,6 +1,6 @@
 {
     "name": "phone-preview",
-    "displayName": "Phone Preview Web app",
+    "displayName": "Mobile Preview",
     "description": "Preview your web app in a phone-sized viewport/mobile device",
     "version": "1.0.1",
     "engines": {
